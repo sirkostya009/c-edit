@@ -1,0 +1,25 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Code Editor</title>
+    <link href="stylesheet.css" rel="stylesheet">
+    <script src="script.js" async></script>
+</head>
+<body class="bg-gray-100 h-screen w-screen grid grid-cols-1 grid-rows-[auto,1fr]">
+
+    <div class="col-span-1 row-span-1 flex items-center justify-center">
+        <textarea class="w-screen h-96 border border-gray-300 p-2" placeholder="Type your C code here..."></textarea>
+        <button id="toggleTerminalBtn" class="bg-blue-500 text-white p-2 ml-2">Toggle terminal</button>
+    </div>
+
+    <div id="terminal" class="col-span-1 row-span-1 hidden p-4 bg-black text-white">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="text-lg font-semibold">Terminal</h2>
+        </div>
+        <div id="terminalContent">
+        </div>
+    </div>
+
+</body>
+</html>
