@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url(/Circular\ Std\ Bold.ttf); 
+
+.bg-grid-gradient {
+    background-size: 30px 30px; /* Adjust the size according to your preference */
+    background-image:
+    linear-gradient(to right, #ffffff 1px, transparent 1px),
+    linear-gradient(to bottom, #ffffff 1px, #0f172a 1px);
+}
+
+.font-circular {
+    font-family: "Circular Std Bold"; 
+}
+
+@supports (-webkit-touch-callout: none) {
+    .h-screen {
+      height: -webkit-fill-available;
+    }
+  }
