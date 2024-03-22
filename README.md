@@ -6,3 +6,4 @@
 
 ## How to develop:
 - Open in some CMake compatible IDE (CLion, Visual Studio, etc.)
+- Install boost and set the appropriate path in CMakeLists.txt
