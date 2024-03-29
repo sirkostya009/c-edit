@@ -4,8 +4,14 @@
 
 .code-area {
     height: calc(100% - 105px);
+    font-family: 'Cascadia Mono', Courier, monospace;
+}
+
+#textareas.flex-col section textarea.code-area {
+    height: calc(50% - 105px);
+    font-family: 'Cascadia Mono', Courier, monospace;
 }
 
 .tab.active {
-    @apply bg-gray-200;
+    @apply bg-[#1e296b];
 }

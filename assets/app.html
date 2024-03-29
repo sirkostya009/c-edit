@@ -5,9 +5,9 @@
     <link href="stylesheet.css" rel="stylesheet">
     <script src="script.js" defer></script>
 </head>
+
 <body class="bg-[#3b3b3b] flex flex-col justify-center min-h-screen select-none" onkeydown="keyBindsListener(event)"
       style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">
-
 <div class="bg-transparent h-8 flex items-center text-lg mt-2 select-none">
 
     <svg class="fill-white w-10 h-10 mr-1 ml-2.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38.000089 42.000031" width="380.00089" height="420.00031" id="svg10">
@@ -26,16 +26,15 @@
             </svg>
         </button>
 
-        <div id="fileMenu" class="hidden absolute z-10 mt-2 w-16 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <button class="block w-full hover:bg-white/10 rounded-md" title="Terminal on the right" role="menuitem" tabindex="-1">
-                <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                    <path d="M600-120q-33 0-56.5-23.5T520-200v-560q0-33 23.5-56.5T600-840h160q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H600Zm-400 0q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h160q33 0 56.5 23.5T440-760v560q0 33-23.5 56.5T360-120H200Zm0-640v560h160v-560H200Zm160 560H200h160Z"/>
-                </svg>
+        <div id="fileMenu" class="hidden absolute z-10 mt-2 w-16 rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+             onclick="toggleMenu('fileMenu')">
+            <button class="block w-full hover:bg-white/10 rounded-md" role="menuitem" tabindex="-1"
+                    onclick="keyBindsListener(new KeyboardEvent('keydown', {key:'o', ctrlKey: true}))">
+                Open
             </button>
-            <button class="block w-full hover:bg-white/10 rounded-md"  title="Terminal at the bottom" role="menuitem" tabindex="-1">
-                <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                    <path d="M200-120q-33 0-56.5-23.5T120-200v-160q0-33 23.5-56.5T200-440h560q33 0 56.5 23.5T840-360v160q0 33-23.5 56.5T760-120H200Zm0-400q-33 0-56.5-23.5T120-600v-160q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v160q0 33-23.5 56.5T760-520H200Zm560-240H200v160h560v-160ZM200-600v-160 160Z"/>
-                </svg>
+            <button class="block w-full hover:bg-white/10 rounded-md" role="menuitem" tabindex="-1"
+                    onclick="keyBindsListener(new KeyboardEvent('keydown', {key:'s', ctrlKey: true}))">
+                Save
             </button>
         </div>
     </div>
@@ -49,14 +48,16 @@
             </svg>
         </button>
 
-        <div id="viewMenu" class="hidden absolute z-10 mt-2 w-16 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-            <button class="block w-full hover:bg-white/10 rounded-md" title="Terminal on the right" role="menuitem" tabindex="-1">
+        <div id="viewMenu" class="hidden absolute z-10 mt-2 w-16 rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+             onclick="toggleMenu('viewMenu')">
+            <button class="block w-full hover:bg-white/10 rounded-md" title="Terminal on the right" role="menuitem" tabindex="-1"
+                    onclick="toggleLayout(event.target)">
                 <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                     <path d="M600-120q-33 0-56.5-23.5T520-200v-560q0-33 23.5-56.5T600-840h160q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H600Zm-400 0q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h160q33 0 56.5 23.5T440-760v560q0 33-23.5 56.5T360-120H200Zm0-640v560h160v-560H200Zm160 560H200h160Z"/>
                 </svg>
             </button>
-            <button class="block w-full hover:bg-white/10 rounded-md"  title="Terminal at the bottom" role="menuitem" tabindex="-1">
+            <button class="block w-full hover:bg-white/10 rounded-md"  title="Terminal at the bottom" role="menuitem" tabindex="-1"
+                    onclick="toggleLayout(event.target)">
                 <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                     <path d="M200-120q-33 0-56.5-23.5T120-200v-160q0-33 23.5-56.5T200-440h560q33 0 56.5 23.5T840-360v160q0 33-23.5 56.5T760-120H200Zm0-400q-33 0-56.5-23.5T120-600v-160q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v160q0 33-23.5 56.5T760-520H200Zm560-240H200v160h560v-160ZM200-600v-160 160Z"/>
                 </svg>
@@ -66,34 +67,20 @@
 
     <div class="relative inline-block text-left">
         <button class="inline-flex w-full justify-center gap-x-1.5 px-2 py-2 text-white text-sm font-semibold hover:bg-white/10 hover:rounded-md"
-                onclick="toggleMenu('settingsMenu')">
+                onclick="OpenSettings()">
             Settings
             <svg class="fill-white w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                 <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/>
             </svg>
         </button>
-
-        <div id="settingsMenu" onblur="toggleMenu('settingsMenu')"
-             class="hidden absolute z-10 mt-2 w-16 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-            <button class="block w-full hover:bg-white/10 rounded-md" title="Terminal on the right" role="menuitem" tabindex="-1" id="menu-item-0">
-                <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                    <path d="M600-120q-33 0-56.5-23.5T520-200v-560q0-33 23.5-56.5T600-840h160q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H600Zm-400 0q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h160q33 0 56.5 23.5T440-760v560q0 33-23.5 56.5T360-120H200Zm0-640v560h160v-560H200Zm160 560H200h160Z"/>
-                </svg>
-            </button>
-            <button class="block w-full hover:bg-white/10 rounded-md"  title="Terminal at the bottom" role="menuitem" tabindex="-1" id="menu-item-1">
-                <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                    <path d="M200-120q-33 0-56.5-23.5T120-200v-160q0-33 23.5-56.5T200-440h560q33 0 56.5 23.5T840-360v160q0 33-23.5 56.5T760-120H200Zm0-400q-33 0-56.5-23.5T120-600v-160q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v160q0 33-23.5 56.5T760-520H200Zm560-240H200v160h560v-160ZM200-600v-160 160Z"/>
-                </svg>
-            </button>
-        </div>
     </div>
 
     <div class="flex-grow w-full"></div>
 
-    <p id="status" class="text-white mr-2.5">Status:</p>
+    <p id="status" class="text-white mr-2.5">Ready</p>
 
-    <button onclick="OnRun(activeTab.getAttribute('data-file'))" class="inline-flex mr-2.5 gap-x-1.5 px-3 py-2 text-white text-sm font-semibold rounded-md bg-[#3b82f6] hover:bg-[#315896] transition-colors duration-300">
+    <button class="inline-flex mr-2.5 gap-x-1.5 px-3 py-2 text-white text-sm font-semibold rounded-md bg-[#3b82f6] hover:bg-[#315896] transition-colors duration-300"
+            onclick="keyBindsListener(new KeyboardEvent('keydown', {key: 'Enter', ctrlKey: true}))">
         <span>Run</span>
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z" clip-rule="evenodd"/>
@@ -101,12 +88,12 @@
     </button>
 </div>
 
-<div class="flex flex-grow flex-row m-2">
-    <section class="flex-grow mr-1">
+<div class="flex flex-grow flex-row m-2" id="textareas">
+    <section class="flex-grow mr-1 h-screen">
         <div class="flex justify-between text-white w-full">
             <div id="tabs" class="flex flex-row"></div>
 
-            <button class="m-2 pb-1 w-10 bg-[#3b3b3b] border border-white/70 hover:bg-white/10" onclick="addTab('Untitled')">
+            <button class="m-2 p-0.5 pb-1.5 w-10 bg-[#3b3b3b] border border-white/70 hover:bg-white/10" onclick="addTab('Untitled')">
                 +
             </button>
 
@@ -114,12 +101,11 @@
         </div>
 
         <textarea id="codearea" readonly="readonly" onkeydown="motion(event)"
-                  class="bg-[#1e293b] code-area w-full flex-grow text-white border-x border-b border-white/70 p-2 focus:outline-none resize-none"
-                  style="font-family: 'Cascadia Mono', Courier, monospace"></textarea>
+                  class="bg-[#1e293b] code-area w-full flex-grow text-white border-x border-b border-white/70 p-2 focus:outline-none resize-none"></textarea>
     </section>
 
-    <section class="flex-grow ml-1">
-        <div class="flex justify-between w-full bg-[#1e293b] text-white border-x border-t border-white/70 relative">
+    <section class="flex-grow ml-1 h-screen" id="terminal-section">
+        <div class="flex justify-between w-full bg-[#1e293b] text-white border-x border-t border-white/70 relative pb-0.5">
             <div class="py-3 px-3 flex items-center">
                 <svg class="fill-white w-5 h-5" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path fill="currentColor" d="M448 64c17.7 0 32 14.3 32 32V416c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32V96c0-17.7 14.3-32 32-32H448zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM99.9 149.6c-5.8 6.7-5 16.8 1.7 22.6L199.4 256l-97.8 83.9c-6.7 5.8-7.5 15.8-1.7 22.6s15.9 7.5 22.6 1.7l112-96c3.5-3 5.6-7.5 5.6-12.1s-2-9.1-5.6-12.1l-112-96c-6.7-5.8-16.8-5-22.6 1.7zM224 352c-8.8 0-16 7.2-16 16s7.2 16 16 16H400c8.8 0 16-7.2 16-16s-7.2-16-16-16H224z"></path>
@@ -127,7 +113,7 @@
                 <span class="ml-2">Console</span>
             </div>
 
-            <button class="px-5 m-1 rounded-md hover:bg-white/15 transition-colors duration-200" onclick="clearTerminal()">
+            <button class="px-5 m-1 rounded-md hover:bg-white/15 transition-colors duration-200" onclick="terminal.value = '';">
                 Clear
             </button>
 
@@ -136,9 +122,7 @@
         </div>
 
         <textarea id="terminal" onkeydown="OnStdIn(event.key)"
-                  class="bg-[#1e293b] code-area w-full text-teal-500 border-x border-b border-white/70 p-1 flex-grow focus:outline-none resize-none font-thin"
-                  style="font-family: 'Cascadia Mono', Courier, monospace"></textarea>
+                  class="bg-[#1e293b] code-area w-full text-teal-500 border-x border-b border-white/70 p-2 flex-grow focus:outline-none resize-none font-thin"></textarea>
     </section>
 </div>
-
 </body>
