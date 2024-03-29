@@ -1,28 +1,29 @@
+'use strict';
+
+const terminalSection = document.getElementById('terminal-section');
 const terminal = document.getElementById('terminal');
 const codearea = document.getElementById('codearea');
 const tabs = document.getElementById('tabs');
+const status = document.getElementById('status');
 
 function keyBindsListener(e) {
-    if (e.ctrlKey && e.key === 's' && codearea.getAttribute('readonly') === null) {
+    if (e.ctrlKey && e.key === 's' && codearea.hasAttribute('readonly')) {
         if (activeTab && !activeTab.getAttribute('data-file')) {
-            const filename = SaveFileDialog(getContents());
+            const filename = SaveFileDialog(codearea.value);
             if (filename) {
                 activeTab.getAttribute('data-file', filename);
                 const groups = /.*([\/\\](.*))$/.exec(filename);
-                console.log(groups);
                 activeTab.children[1].innerText = groups[2];
             }
             activeTab.setAttribute('data-file', filename);
         } else if (activeTab) {
             const filename = activeTab.getAttribute('data-file');
-            SaveFile(filename, getContents());
+            SaveFile(filename, codearea.value);
         }
     } else if (e.ctrlKey && e.key === 'o') {
         const [contents, filename] = OpenFileDialog();
         const groups = /.*([\/\\](.*))$/.exec(filename);
-        if (contents) {
-            addTab(groups[2], contents);
-        }
+        addTab(groups[2], contents);
         activeTab.setAttribute('data-file', filename);
     } else if (e.ctrlKey && e.key === 'n') {
         addTab('Untitled');
@@ -30,6 +31,8 @@ function keyBindsListener(e) {
         e.preventDefault();
         OnRun(activeTab.getAttribute('data-file'));
         terminal.removeAttribute('readonly');
+        terminalSection.classList.remove('hidden');
+        terminal.focus();
         e.stopPropagation();
     } else if (e.ctrlKey && e.key === 'Tab') {
         // TODO: next tab
@@ -37,6 +40,8 @@ function keyBindsListener(e) {
         if (activeTab) {
             activeTab.children[2].click();
         }
+    } else if (e.ctrlKey && e.key === '`') {
+        toggleTerminal();
     }
 }
 
@@ -59,29 +64,34 @@ function tabElement(name, content) {
 
     const [element] = template.content.children;
     element.setAttribute('data-content', content);
-    element.setAttribute('data-terminal', '');
     element.onclick = (e) => {
         if (e.target instanceof HTMLButtonElement) {
             return;
         }
-        console.log('click', element.id);
         activeTab.classList.remove('active');
         element.classList.add('active');
         activeTab = element;
-        showContents(element.getAttribute('data-content'));
+        codearea.value = element.getAttribute('data-content');
     };
 
     const close = element.children[2];
     close.onclick = () => {
         let nextTab;
-        if (element === activeTab) {
-            nextTab = tabs.querySelector(`#tab-${tabId} + div`) || tabs.querySelector(`#tab-${tabId} ~ div`);
+        for (let i = 0; i < tabs.children.length; i++) {
+            if (tabs.children[i] === element) {
+                if (i) {
+                    nextTab = tabs.children[i - 1];
+                } else if (tabs.children.length > 1) {
+                    nextTab = tabs.children[i + 1];
+                }
+                break;
+            }
         }
         element.remove();
         if (nextTab) {
             nextTab.click();
         } else {
-            showContents('');
+            codearea.value = '';
         }
         if (tabs.children.length === 0) {
             codearea.setAttribute('readonly', 'readonly');
@@ -92,6 +102,11 @@ function tabElement(name, content) {
 }
 
 function motion(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        return;
+    }
+
     if (e.shiftKey && e.key === 'Tab') {
         e.preventDefault();
         const start = codearea.selectionStart;
@@ -121,36 +136,48 @@ function motion(e) {
         }
     }
 
-    activeTab.setAttribute('data-content', codearea.value);
-}
-
-function showContents(contents) {
-    codearea.value = contents;
-}
-
-function getContents() {
-    return codearea.value;
-}
-
-function addTerminal(content) {
-    terminal.value += content;
-    activeTab.setAttribute('data-terminal', terminal.value);
-    terminal.removeAttribute('readonly');
+    if (e.defaultPrevented && e.key.length === 1) {
+        activeTab.setAttribute('data-content', codearea.value);
+    }
 }
 
 function addTab(label, content = '') {
     codearea.removeAttribute('readonly');
     const tab = tabElement(label, content);
     tabs.appendChild(tab);
+    activeTab && activeTab.classList.remove('active');
     activeTab = tab;
-    showContents(content);
+    codearea.value = content;
     codearea.focus();
 }
 
 function toggleMenu(id) {
-    document.getElementById(id).classList.toggle('hidden');
+    const menu = document.getElementById(id);
+    if (!menu.classList.toggle('hidden')) {
+        menu.focus();
+    }
 }
 
-function clearTerminal() {
-    terminal.value = '';
+let currentViewLayoutButton;
+
+function toggleLayout(target) {
+    currentViewLayoutButton && currentViewLayoutButton.toggleAttribute('active');
+    currentViewLayoutButton = target;
+    currentViewLayoutButton.toggleAttribute('active');
+    const list = document.getElementById('textareas').classList;
+    if (list.contains('flex-row')) {
+        list.replace('flex-row', 'flex-col');
+    } else {
+        list.replace('flex-col', 'flex-row');
+    }
+    document.querySelectorAll('#textareas section')
+        .forEach(section => section.classList.toggle('h-screen'));
+}
+
+function toggleTerminal() {
+    if (terminalSection.classList.toggle('hidden')) {
+        codearea.focus();
+    } else {
+        terminal.focus();
+    }
 }
