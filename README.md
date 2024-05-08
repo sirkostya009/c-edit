@@ -2,12 +2,10 @@
 
 A lightweight and simple code editor for learning C/C++ development written in C++ using [Ultralight](https://ultralig.ht/) framework.
 
-![](img.png)
+![C Edit](img.png)
 
-## How to run:
-- Open in some CMake compatible IDE (CLion, Visual Studio, etc.)
-- Run the program
+## Building
 
-## How to develop:
 - Open in some CMake compatible IDE (CLion, Visual Studio, etc.)
-- Install boost and set the appropriate path in CMakeLists.txt
+- Install Boost and set the path to it in CMakeLists.txt
+- Build!

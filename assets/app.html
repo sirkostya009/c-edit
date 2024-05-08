@@ -1,128 +1,217 @@
 <head>
     <meta charset="UTF-8">
+    <title>C-Edit</title>
+    <link rel="stylesheet" href="stylesheet.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C Edit</title>
-    <link href="stylesheet.css" rel="stylesheet">
-    <script src="script.js" defer></script>
 </head>
 
-<body class="bg-[#3b3b3b] flex flex-col justify-center min-h-screen select-none" onkeydown="keyBindsListener(event)"
-      style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">
-<div class="bg-transparent h-8 flex items-center text-lg mt-2 select-none">
+<body class="bg-[#3b3b3b] flex flex-col text-white">
 
-    <svg class="fill-white w-10 h-10 mr-1 ml-2.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38.000089 42.000031" width="380.00089" height="420.00031" id="svg10">
-        <path fill="#283593" fill-rule="evenodd" d="m 17.903,0.28628166 c 0.679,-0.381 1.515,-0.381 2.193,0 C 23.451,2.1692817 33.547,7.8372817 36.903,9.7202817 37.582,10.100282 38,10.804282 38,11.566282 c 0,3.766 0,15.101 0,18.867 0,0.762 -0.418,1.466 -1.097,1.847 -3.355,1.883 -13.451,7.551 -16.807,9.434 -0.679,0.381 -1.515,0.381 -2.193,0 -3.355,-1.883 -13.451,-7.551 -16.807,-9.434 -0.678,-0.381 -1.096,-1.084 -1.096,-1.846 0,-3.766 0,-15.101 0,-18.867 0,-0.762 0.418,-1.466 1.097,-1.8470003 3.354,-1.883 13.452,-7.551 16.806,-9.43400004 z" clip-rule="evenodd" id="path2" style="fill:#004482;fill-opacity:1"/>
-        <path fill="#5c6bc0" fill-rule="evenodd" d="m 0.304,31.404282 c -0.266,-0.356 -0.304,-0.694 -0.304,-1.149 0,-3.744 0,-15.014 0,-18.759 0,-0.758 0.417,-1.458 1.094,-1.8360003 3.343,-1.872 13.405,-7.507 16.748,-9.38000004 0.677,-0.379 1.594,-0.371 2.271,0.008 3.343,1.87200004 13.371,7.45900004 16.714,9.33100004 0.27,0.152 0.476,0.335 0.66,0.5760003 z" clip-rule="evenodd" id="path4" style="fill:#659ad2;fill-opacity:1"/>
-        <path fill="#ffffff" fill-rule="evenodd" d="m 19,7.0002817 c 7.727,0 14,6.2730003 14,14.0000003 0,7.727 -6.273,14 -14,14 -7.727,0 -14,-6.273 -14,-14 0,-7.727 6.273,-14.0000003 14,-14.0000003 z m 0,7.0000003 c 3.863,0 7,3.136 7,7 0,3.863 -3.137,7 -7,7 -3.863,0 -7,-3.137 -7,-7 0,-3.864 3.136,-7 7,-7 z" clip-rule="evenodd" id="path6"/>
-        <path fill="#3949ab" fill-rule="evenodd" d="m 37.485,10.205282 c 0.516,0.483 0.506,1.211 0.506,1.784 0,3.795 -0.032,14.589 0.009,18.384 0.004,0.396 -0.127,0.813 -0.323,1.127 l -19.084,-10.5 z" clip-rule="evenodd" id="path8" style="fill:#00599c;fill-opacity:1"/>
-    </svg>
+<section class="w-full h-6 bg-[#1b1b1b] py-1 flex flex-row items-center border-white/70">
+    <button id="fileButton" onclick="fileMenu.classList.toggle('hidden')" class="px-2 focus:bg-[#222222]">File</button>
 
-    <div class="relative inline-block text-left">
-        <button class="inline-flex w-full justify-center gap-x-1.5 px-2 py-2 text-white text-sm font-semibold hover:bg-white/10 hover:rounded-md"
-                onclick="toggleMenu('fileMenu')">
-            File
-            <svg class="-mr-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-            </svg>
-        </button>
-
-        <div id="fileMenu" class="hidden absolute z-10 mt-2 w-16 rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-             onclick="toggleMenu('fileMenu')">
-            <button class="block w-full hover:bg-white/10 rounded-md" role="menuitem" tabindex="-1"
-                    onclick="keyBindsListener(new KeyboardEvent('keydown', {key:'o', ctrlKey: true}))">
-                Open
-            </button>
-            <button class="block w-full hover:bg-white/10 rounded-md" role="menuitem" tabindex="-1"
-                    onclick="keyBindsListener(new KeyboardEvent('keydown', {key:'s', ctrlKey: true}))">
-                Save
-            </button>
-        </div>
+    <div id="fileMenu" class="bg-[#222222] p-1 rounded-[4px] absolute top-6 z-10 h-auto w-[80px] hidden">
+        <button class="text-gray-300 rounded-[4px] px-1.5 pb-1 w-full text-left hover:bg-[#3e3e3e] hover:text-white" onclick="openFile()">Open</button>
+        <button class="text-gray-300 rounded-[4px] px-1.5 pb-1 w-full text-left hover:bg-[#3e3e3e] hover:text-white" onclick="saveDialog()">Save</button>
     </div>
 
-    <div class="relative inline-block text-left">
-        <button class="inline-flex w-full justify-center gap-x-1.5 px-2 py-2 text-white text-sm font-semibold hover:bg-white/10 hover:rounded-md"
-                onclick="toggleMenu('viewMenu')">
-            View
-            <svg class="-mr-1 h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-            </svg>
-        </button>
+    <button id="viewButton" onclick="viewMenu.classList.toggle('hidden')" class="px-2 focus:bg-[#222222]">View</button>
 
-        <div id="viewMenu" class="hidden absolute z-10 mt-2 w-16 rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-             onclick="toggleMenu('viewMenu')">
-            <button class="block w-full hover:bg-white/10 rounded-md" title="Terminal on the right" role="menuitem" tabindex="-1"
-                    onclick="toggleLayout(event.target)">
-                <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                    <path d="M600-120q-33 0-56.5-23.5T520-200v-560q0-33 23.5-56.5T600-840h160q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H600Zm-400 0q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h160q33 0 56.5 23.5T440-760v560q0 33-23.5 56.5T360-120H200Zm0-640v560h160v-560H200Zm160 560H200h160Z"/>
-                </svg>
-            </button>
-            <button class="block w-full hover:bg-white/10 rounded-md"  title="Terminal at the bottom" role="menuitem" tabindex="-1"
-                    onclick="toggleLayout(event.target)">
-                <svg class="fill-white w-8 h-8 mx-auto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                    <path d="M200-120q-33 0-56.5-23.5T120-200v-160q0-33 23.5-56.5T200-440h560q33 0 56.5 23.5T840-360v160q0 33-23.5 56.5T760-120H200Zm0-400q-33 0-56.5-23.5T120-600v-160q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v160q0 33-23.5 56.5T760-520H200Zm560-240H200v160h560v-160ZM200-600v-160 160Z"/>
-                </svg>
-            </button>
-        </div>
+    <div id="viewMenu" class="bg-[#222222] p-1 rounded-[4px] absolute left-10 top-6 z-10 h-auto w-[120px] hidden">
+        <button class="text-gray-300 rounded-[4px] px-1.5 pb-1 w-full text-left hover:bg-[#3e3e3e] hover:text-white" onclick="toggleLayout()">Horizontal</button>
+        <button class="text-gray-300 rounded-[4px] px-1.5 pb-1 w-full text-left hover:bg-[#3e3e3e] hover:text-white" onclick="toggleLayout()">Vertical</button>
     </div>
 
-    <div class="relative inline-block text-left">
-        <button class="inline-flex w-full justify-center gap-x-1.5 px-2 py-2 text-white text-sm font-semibold hover:bg-white/10 hover:rounded-md"
-                onclick="OpenSettings()">
-            Settings
-            <svg class="fill-white w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/>
-            </svg>
-        </button>
+    <button id="runButton" onclick="runMenu.classList.toggle('hidden')" class="px-2 focus:bg-[#222222]">Run</button>
+
+    <div id="runMenu" class="bg-[#222222] p-1 rounded-[4px] absolute left-[90px] top-6 z-10 h-auto w-[80px] hidden">
+        <button class="text-gray-300 rounded-[4px] px-1.5 pb-1 w-full text-left hover:bg-[#3e3e3e] hover:text-white" onclick="buildAndRun()">Run</button>
+        <button class="text-gray-300 rounded-[4px] px-1.5 pb-1 w-full text-left hover:bg-[#3e3e3e] hover:text-white" onclick="stopRunning()">Stop</button>
     </div>
 
-    <div class="flex-grow w-full"></div>
+    <button onclick="openSettings()" class="px-2 focus:bg-[#222222]">Settings</button>
 
-    <p id="status" class="text-white mr-2.5">Ready</p>
+    <script>
+        addEventListener('click', e => e.target !== fileButton && fileMenu.classList.add('hidden'));
+        addEventListener('click', e => e.target !== viewButton && viewMenu.classList.add('hidden'));
+        addEventListener('click', e => e.target !== runButton && runMenu.classList.add('hidden'));
+    </script>
+</section>
 
-    <button class="inline-flex mr-2.5 gap-x-1.5 px-3 py-2 text-white text-sm font-semibold rounded-md bg-[#3b82f6] hover:bg-[#315896] transition-colors duration-300"
-            onclick="keyBindsListener(new KeyboardEvent('keydown', {key: 'Enter', ctrlKey: true}))">
-        <span>Run</span>
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z" clip-rule="evenodd"/>
+<section class="w-full bg-[#1b1b1b] flex flex-row items-center border-white/70 py-1 space-x-3">
+    <button onclick="openFile()" class="ml-1">
+        <svg class="text-gray-300 hover:text-white transition-color duration-300" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+            <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+            <path d="M9 15h6"/>
+            <path d="M12 18v-6"/>
         </svg>
     </button>
-</div>
 
-<div class="flex flex-grow flex-row m-2" id="textareas">
-    <section class="flex-grow mr-1 h-screen">
-        <div class="flex justify-between text-white w-full">
-            <div id="tabs" class="flex flex-row"></div>
+    <button onclick="saveDialog()" class="ml-2">
+        <svg class="text-gray-300 hover:text-white transition-color duration-300" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
+            <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/>
+            <path d="M7 3v4a1 1 0 0 0 1 1h7"/>
+        </svg>
+    </button>
 
-            <button class="m-2 p-0.5 pb-1.5 w-10 bg-[#3b3b3b] border border-white/70 hover:bg-white/10" onclick="addTab('Untitled')">
+    <button onclick="toggleLayout()" class="ml-2">
+        <svg class="text-gray-300 hover:text-white transition-color duration-300" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2"/>
+            <path d="M3 12h18"/>
+        </svg>
+    </button>
+
+    <button onclick="toggleLayout()" class="ml-2">
+        <svg class="text-gray-300 hover:text-white transition-color duration-300" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2"/>
+            <path d="M12 3v18"/>
+        </svg>
+    </button>
+
+    <button onclick="toggleTerminal()" class="ml-2">
+        <svg class="text-gray-300 hover:text-white transition-color duration-300" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m7 11 2-2-2-2"/>
+            <path d="M11 13h4"/>
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+        </svg>
+    </button>
+
+    <button onclick="buildAndRun()" class="ml-2">
+        <svg class="text-green-600 fill-green-600 hover:text-green-500 hover:fill-green-500 transition-color duration-300" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="6 3 20 12 6 21 6 3"/>
+        </svg>
+    </button>
+
+    <button onclick="stopRunning()" class="ml-2">
+        <svg class="text-red-600 fill-red-600 hover:text-red-500 hover:fill-red-500 transition-color duration-300" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2"/>
+        </svg>
+    </button>
+</section>
+
+<section class="w-full flex flex-row">
+    <div class="flex flex-row">
+        <div id="tabs" class="flex flex-row">
+        </div>
+
+        <div class="border-b">
+            <button class="m-2 p-0.5 pb-1.5 w-8 h-8 bg-transparent border border-white/70 hover:bg-white/10" onclick="newTab()">
                 +
             </button>
+        </div>
+    </div>
 
-            <div class="w-full"></div>
+    <div class="flex-grow border-b min-w-0">
+    </div>
+</section>
+
+<main id="textareas" class="flex-1 grid grid-cols-2 bg-[#1e296b] divide-white divide-x">
+    <textarea id="codearea"
+              oninput="activeTab && activeTab.setAttribute('data-contents', this.value)"
+              class="w-full p-0.5 flex-1 bg-transparent focus:outline-none resize-none"></textarea>
+
+    <section class="flex flex-col">
+        <div class="absolute flex p-1 right-0">
+            <button class="px-1 rounded-[7px] hover:bg-white/15" onclick="copyTerminal()">Copy</button>
+            <button class="px-1 rounded-[7px] hover:bg-white/15" onclick="toggleTerminal()">Close</button>
         </div>
 
-        <textarea id="codearea" readonly="readonly" onkeydown="motion(event)"
-                  class="bg-[#1e293b] code-area w-full flex-grow text-white border-x border-b border-white/70 p-2 focus:outline-none resize-none"></textarea>
+        <textarea id="terminal" onkeydown="stdin(event.key)" class="w-full flex-1 bg-transparent focus:outline-none resize-none"></textarea>
     </section>
 
-    <section class="flex-grow ml-1 h-screen" id="terminal-section">
-        <div class="flex justify-between w-full bg-[#1e293b] text-white border-x border-t border-white/70 relative pb-0.5">
-            <div class="py-3 px-3 flex items-center">
-                <svg class="fill-white w-5 h-5" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path fill="currentColor" d="M448 64c17.7 0 32 14.3 32 32V416c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32V96c0-17.7 14.3-32 32-32H448zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM99.9 149.6c-5.8 6.7-5 16.8 1.7 22.6L199.4 256l-97.8 83.9c-6.7 5.8-7.5 15.8-1.7 22.6s15.9 7.5 22.6 1.7l112-96c3.5-3 5.6-7.5 5.6-12.1s-2-9.1-5.6-12.1l-112-96c-6.7-5.8-16.8-5-22.6 1.7zM224 352c-8.8 0-16 7.2-16 16s7.2 16 16 16H400c8.8 0 16-7.2 16-16s-7.2-16-16-16H224z"></path>
-                </svg>
-                <span class="ml-2">Console</span>
-            </div>
+    <script>
+        codearea.addEventListener('keydown', e => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = codearea.selectionStart;
+                const end = codearea.selectionEnd;
+                const value = codearea.value;
 
-            <button class="px-5 m-1 rounded-md hover:bg-white/15 transition-colors duration-200" onclick="terminal.value = '';">
-                Clear
-            </button>
+                codearea.value = value.substring(0, start) + '\t' + value.substring(end);
+                codearea.selectionStart = codearea.selectionEnd = start + 1;
+            }
+        });
+    </script>
+</main>
 
-            <!-- Add the after pseudo-element for the line -->
-            <div class="absolute bottom-0 w-4/5 left-1/2 transform -translate-x-1/2 after:block after:content-[''] after:w-full after:h-px after:bg-white after:absolute after:bottom-0"></div>
-        </div>
+<section class="bg-black text-white">
+    <p id="runStatus" class="ml-1">Ready</p>
+</section>
 
-        <textarea id="terminal" onkeydown="OnStdIn(event.key)"
-                  class="bg-[#1e293b] code-area w-full text-teal-500 border-x border-b border-white/70 p-2 flex-grow focus:outline-none resize-none font-thin"></textarea>
-    </section>
-</div>
 </body>
+
+<script>
+    let tabIds = 0;
+    let activeTab;
+
+    function TabElement(title, filename, contents) {
+        const div = document.createElement('div');
+        div.id = `tab-${tabIds++}`;
+        div.className = `bg-[#1e293b] tab border border-white/70 py-3 px-3 flex items-center active`;
+        div.innerHTML = `
+            <svg class="fill-white w-5 h-5" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 115.28 122.88">
+                <g><path style="fill-rule: evenodd; clip-rule: evenodd;" d="M25.38,57h64.88V37.34H69.59c-2.17,0-5.19-1.17-6.62-2.6c-1.43-1.43-2.3-4.01-2.3-6.17V7.64l0,0H8.15 c-0.18,0-0.32,0.09-0.41,0.18C7.59,7.92,7.55,8.05,7.55,8.24v106.45c0,0.14,0.09,0.32,0.18,0.41c0.09,0.14,0.28,0.18,0.41,0.18 c22.78,0,58.09,0,81.51,0c0.18,0,0.17-0.09,0.27-0.18c0.14-0.09,0.33-0.28,0.33-0.41v-11.16H25.38c-4.14,0-7.56-3.4-7.56-7.56 V64.55C17.82,60.4,21.22,57,25.38,57L25.38,57z M69.94,82.64l6.9,2.08c-0.46,1.93-1.19,3.55-2.19,4.84c-1,1.3-2.23,2.28-3.71,2.93 c-1.48,0.66-3.35,0.99-5.64,0.99c-2.77,0-5.03-0.4-6.79-1.2c-1.75-0.81-3.26-2.22-4.54-4.24c-1.27-2.02-1.91-4.62-1.91-7.77 c0-4.21,1.12-7.44,3.36-9.71c2.25-2.26,5.42-3.39,9.52-3.39c3.21,0,5.73,0.65,7.57,1.94c1.83,1.3,3.2,3.29,4.09,5.98l-6.93,1.53 c-0.24-0.77-0.5-1.33-0.76-1.69c-0.44-0.6-0.98-1.06-1.62-1.38c-0.64-0.33-1.35-0.49-2.14-0.49c-1.79,0-3.16,0.72-4.11,2.14 c-0.72,1.06-1.08,2.73-1.08,5c0,2.82,0.43,4.75,1.29,5.8c0.86,1.04,2.06,1.56,3.61,1.56c1.51,0,2.64-0.42,3.41-1.27 C69.03,85.48,69.59,84.25,69.94,82.64L69.94,82.64z M97.79,57h9.93c4.16,0,7.56,3.41,7.56,7.56v31.42c0,4.15-3.41,7.56-7.56,7.56 h-9.93v13.55c0,1.61-0.65,3.04-1.7,4.1c-1.06,1.06-2.49,1.7-4.1,1.7c-29.44,0-56.59,0-86.18,0c-1.61,0-3.04-0.64-4.1-1.7 c-1.06-1.06-1.7-2.49-1.7-4.1V5.85c0-1.61,0.65-3.04,1.7-4.1c1.06-1.06,2.53-1.7,4.1-1.7h58.72C64.66,0,64.8,0,64.94,0 c0.64,0,1.29,0.28,1.75,0.69h0.09c0.09,0.05,0.14,0.09,0.23,0.18l29.99,30.36c0.51,0.51,0.88,1.2,0.88,1.98 c0,0.23-0.05,0.41-0.09,0.65V57L97.79,57z M67.52,27.97V8.94l21.43,21.7H70.19c-0.74,0-1.38-0.32-1.89-0.78 C67.84,29.4,67.52,28.71,67.52,27.97L67.52,27.97z"/></g>
+            </svg>
+            <span class="ml-2">${title}</span>
+            <button class="ml-2 hover:text-red-800">🞪</button>
+        `;
+
+        div.onclick = (e) => {
+            if (e.target instanceof HTMLButtonElement) {
+                return;
+            }
+            activeTab && activeTab.classList.remove('active');
+            div.classList.add('active');
+            activeTab = div;
+            codearea.value = div.getAttribute('data-contents');
+        };
+        div.children[2].onclick = () => {
+            let nextTab;
+            for (let i = 0; i < tabs.children.length; i++) {
+                if (tabs.children[i] === div) {
+                    if (i) {
+                        nextTab = tabs.children[i - 1];
+                    } else if (tabs.children.length > 1) {
+                        nextTab = tabs.children[i + 1];
+                    }
+                    break;
+                }
+            }
+            if (div === activeTab) {
+                if (nextTab) {
+                    nextTab.click();
+                } else {
+                    activeTab = null;
+                    codearea.value = '';
+                }
+            }
+            div.remove();
+        };
+
+        div.setAttribute('data-filename', filename);
+        div.setAttribute('data-contents', contents);
+
+        return div;
+    }
+
+    function newTab(filename = null, contents = '') {
+        const title = filename ? /.*([\/\\](.*))$/.exec(filename)[2] : 'Untitled';
+        const tab = TabElement(title, filename, contents);
+        tabs.appendChild(tab);
+        tab.click();
+    }
+
+    function toggleLayout() {
+        textareas.classList.toggle('grid-cols-2');
+        textareas.classList.toggle('divide-y');
+        textareas.classList.toggle('divide-x');
+    }
+
+    function toggleTerminal() {
+        (terminal.parentElement.classList.toggle('hidden') ? codearea : terminal).focus();
+        codearea.classList.toggle('col-span-2');
+        codearea.classList.toggle('row-span-2');
+    }
+</script>
