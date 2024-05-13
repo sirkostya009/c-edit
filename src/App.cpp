@@ -11,6 +11,14 @@
 namespace bf = boost::filesystem;
 namespace ba = boost::asio;
 
+namespace {
+    COMDLG_FILTERSPEC filterSpec[] = {
+            {L"C++ Files", L"*.cpp"},
+            {L"C Files",   L"*.c"},
+            {L"All Files", L"*.*"},
+    };
+}
+
 App::App()
 : app{ ul::App::Create() }
 , window{ ul::Window::Create(app->main_monitor(),
@@ -30,10 +38,6 @@ App::App()
     overlay->Resize(window->width(), window->height());
     overlay->view()->LoadURL("file:///app.html");
     overlay->Focus();
-}
-
-void App::run() {
-    app->Run();
 }
 
 inline ul::String getContents() {
@@ -76,6 +80,7 @@ IFileDialog* createDialogInstance(bool save) {
     if (FAILED(hr)) {
         return nullptr;
     }
+    dialog->SetFileTypes(3, filterSpec);
 
     return dialog;
 }
@@ -104,12 +109,32 @@ ul::String saveDialog(HWND window) {
     return {};
 }
 
-void App::SaveFile(const ul::JSObject &thisObject, const ul::JSArgs &args) {
+inline bool isActiveTab() {
+    return ul::JSEval("activeTab").ToBoolean();
+}
+
+inline void clearTerminal() {
+    ul::JSEval("terminal.value = ''");
+}
+
+inline bool isTerminalHidden() {
+    return ul::JSEval("terminal.parentElement.classList.contains('hidden')").ToBoolean();
+}
+
+inline bool hasFilename() {
+    return ul::JSEval("activeTab.getAttribute('data-filename') !== 'null'").ToBoolean();
+}
+
+inline ul::String getFilename() {
+    return ul::JSEval("activeTab.getAttribute('data-filename')");
+}
+
+void App::SaveFile(const ul::JSObject&, const ul::JSArgs&) {
     if (ul::JSEval("!activeTab").ToBoolean()) {
         return;
     }
 
-    if (!ul::JSEval("activeTab.getAttribute('data-filename')").ToBoolean()) {
+    if (!ul::JSEval("activeTab.getAttribute('data-filename') === 'null'").ToBoolean()) {
         auto filename = saveDialog((HWND) window->native_handle());
         if (filename.empty()) {
             return;
@@ -123,20 +148,20 @@ void App::SaveFile(const ul::JSObject &thisObject, const ul::JSArgs &args) {
 }
 
 void App::BuildAndRun(const ul::JSObject&, const ul::JSArgs&) {
-    if (ul::JSEval("!activeTab").ToBoolean()) {
+    if (!isActiveTab()) {
         return;
     }
 
     if (isRunning) return;
     isRunning = true;
 
-    ul::JSEval("terminal.value = ''");
-    if (ul::JSEval("terminal.parentElement.classList.contains('hidden')").ToBoolean()) toggleTerminal();
+    clearTerminal();
+    if (isTerminalHidden()) {
+        toggleTerminal();
+    }
 
     std::thread([&] {
-        auto filename = ul::JSEval("activeTab.getAttribute('data-filename') !== 'null'").ToBoolean()
-                        ? std::string(((ul::String) ul::JSEval("activeTab.getAttribute('data-filename')")).utf8().data())
-                        : ((bf::temp_directory_path() / bf::unique_path()).string() + ".cpp");
+        auto filename = hasFilename() ? std::string(getFilename().utf8().data()) : (bf::temp_directory_path() / bf::unique_path()).string() + ".cpp";
         std::ofstream(filename) << getContents().utf8().data();
 
         auto out = bp::ipstream();
@@ -159,7 +184,6 @@ void App::BuildAndRun(const ul::JSObject&, const ul::JSArgs&) {
 
         compilation.wait();
         if (err || compilation.exit_code()) {
-            toggleTerminal();
             print("Compilation failed\\n" + err.message());
             status("Failed");
             isRunning = false;
@@ -177,6 +201,8 @@ void App::BuildAndRun(const ul::JSObject&, const ul::JSArgs&) {
         if (err) {
             print("Execution failed\\n" + err.message());
             status("Failed");
+            delete in;
+            in = nullptr;
             isRunning = false;
             return;
         }
@@ -221,7 +247,7 @@ std::array<ul::String, 2> openDialog(HWND window) {
     return {};
 }
 
-void App::OpenFile(const ul::JSObject &, const ul::JSArgs &) {
+void App::OpenFile(const ul::JSObject&, const ul::JSArgs&) {
     auto [filename, contents] = openDialog((HWND) window->native_handle());
 
     if (filename.empty()) {
@@ -231,7 +257,7 @@ void App::OpenFile(const ul::JSObject &, const ul::JSArgs &) {
     ul::JSEval("newTab('" + filename + "', `" + contents + "`)");
 }
 
-void App::Copy(const ul::JSObject &, const ul::JSArgs &) {
+void App::Copy(const ul::JSObject&, const ul::JSArgs&) {
     auto text = ((ul::String) ul::JSEval("terminal.value")).utf8();
     auto hwnd = (HWND) window->native_handle();
 
@@ -249,7 +275,7 @@ void App::Copy(const ul::JSObject &, const ul::JSArgs &) {
     GlobalFree(hg);
 }
 
-void App::OnStdIn(const ul::JSObject &thisObject, const ul::JSArgs &args) {
+void App::OnStdIn(const ul::JSObject&, const ul::JSArgs& args) {
     if (in == nullptr) {
         return;
     }
@@ -280,7 +306,7 @@ void App::OnStdIn(const ul::JSObject &thisObject, const ul::JSArgs &args) {
     });
 }
 
-void App::OpenSettings(const ul::JSObject &thisObject, const ul::JSArgs &args) {
+void App::OpenSettings(const ul::JSObject&, const ul::JSArgs&) {
     if (settings) {
         return;
     }
@@ -302,7 +328,7 @@ void App::OnUpdate() {
     }
 }
 
-bool App::OnKeyEvent(const ul::KeyEvent &evt) {
+bool App::OnKeyEvent(const ul::KeyEvent& evt) {
     if ((evt.modifiers & ul::KeyEvent::kMod_CtrlKey) && !evt.is_auto_repeat && evt.type == ul::KeyEvent::Type::kType_RawKeyDown) {
         std::cout << evt.virtual_key_code << std::endl;
         switch (evt.virtual_key_code) {
@@ -321,7 +347,7 @@ bool App::OnKeyEvent(const ul::KeyEvent &evt) {
                 return false;
             }
 
-            if (ul::JSEval("!activeTab.getAttribute('data-filename')").ToBoolean()) {
+            if (ul::JSEval("activeTab.getAttribute('data-filename') === 'null'").ToBoolean()) {
                 auto result = saveDialog((HWND) window->native_handle());
 
                 if (result.empty()) {

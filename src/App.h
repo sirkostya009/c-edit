@@ -14,7 +14,7 @@ namespace bp = boost::process;
 class App : public ul::AppListener, public ul::WindowListener, public ul::LoadListener, public ul::ViewListener {
 public:
     App();
-    void run();
+    inline void run() { app->Run(); }
     void OnUpdate() override;
     bool OnKeyEvent(const ul::KeyEvent &evt) override;
     void OnClose(ul::Window*) override;
@@ -40,12 +40,12 @@ private:
     inline void status(const std::string& message);
     inline void toggleTerminal();
 
-    void BuildAndRun(const ul::JSObject& thisObject, const ul::JSArgs& args);
-    void OnStdIn(const ul::JSObject &thisObject, const ul::JSArgs &args);
-    void SaveFile(const ul::JSObject &thisObject, const ul::JSArgs &args);
-    void OpenSettings(const ul::JSObject &thisObject, const ul::JSArgs &args);
-    void OpenFile(const ul::JSObject &, const ul::JSArgs &);
-    void Copy(const ul::JSObject&, const ul::JSArgs& args);
+    void BuildAndRun(const ul::JSObject&, const ul::JSArgs&);
+    void OnStdIn(const ul::JSObject&, const ul::JSArgs& args);
+    void SaveFile(const ul::JSObject&, const ul::JSArgs&);
+    void OpenSettings(const ul::JSObject&, const ul::JSArgs&);
+    void OpenFile(const ul::JSObject&, const ul::JSArgs &);
+    void Copy(const ul::JSObject&, const ul::JSArgs&);
 };
 
 #endif //C_EDIT_APP_H
