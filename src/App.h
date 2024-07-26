@@ -2,14 +2,12 @@
 #define C_EDIT_APP_H
 
 #include <AppCore/AppCore.h>
-#include <array>
 #include <string>
 #include <queue>
-#include <boost/process.hpp>
 #include "Settings.h"
+#include "ProcessRunner.h"
 
 namespace ul = ultralight;
-namespace bp = boost::process;
 
 class App : public ul::AppListener, public ul::WindowListener, public ul::LoadListener, public ul::ViewListener {
 public:
@@ -28,17 +26,11 @@ private:
     ul::RefPtr<ul::Window> window;
     ul::RefPtr<ul::Overlay> overlay;
 
-    bool isRunning = false;
-    bp::async_pipe* in = nullptr;
-
     std::queue<std::string> jsCallbacks;
+    ProcessRunner runner;
 
-    Settings* settings = nullptr;
+    std::unique_ptr<Settings> settings;
     bool closeSettings = false;
-
-    inline void print(const std::string& message);
-    inline void status(const std::string& message);
-    inline void toggleTerminal();
 
     void BuildAndRun(const ul::JSObject&, const ul::JSArgs&);
     void OnStdIn(const ul::JSObject&, const ul::JSArgs& args);

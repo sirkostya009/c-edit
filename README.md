@@ -6,6 +6,5 @@ A lightweight and simple code editor for learning C/C++ development written in C
 
 ## Building
 
-- Open in some CMake compatible IDE (CLion, Visual Studio, etc.)
-- Install Boost and set the path to it in CMakeLists.txt
-- Build!
+- Clone recursively
+- Build with CMake

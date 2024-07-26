@@ -13,7 +13,7 @@ auto main() -> int {
         std::getline(dat, settings.libPath);
         std::getline(dat, settings.compiler);
         if (settings.compiler.empty()) {
-            settings.compiler = "g++";
+            settings.compiler = "g++.exe";
         }
 
         dat >> settings.width >> settings.height;

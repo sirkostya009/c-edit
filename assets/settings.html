@@ -1,122 +1,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
+    <title>Налаштування</title>
     <link href="stylesheet.css" rel="stylesheet">
 </head>
-<body class="bg-[#3b3b3b] h-screen mx-auto max-w-screen-md flex flex-col items-center" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">
-
-    <div class="grid grid-cols-2 gap-x-6 mt-10 mb-10">
+<body class="bg-[#3b3b3b] h-screen mx-auto max-w-screen-md flex flex-col items-center text-white">
+    <div class="grid grid-cols-3 gap-x-6 mt-10 mb-10 place-items-center">
         <svg class="fill-white w-36 h-36" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38.000089 42.000031" width="380.00089" height="420.00031" version="1.1" id="svg10">
             <path fill="#283593" fill-rule="evenodd" d="m 17.903,0.28628166 c 0.679,-0.381 1.515,-0.381 2.193,0 C 23.451,2.1692817 33.547,7.8372817 36.903,9.7202817 37.582,10.100282 38,10.804282 38,11.566282 c 0,3.766 0,15.101 0,18.867 0,0.762 -0.418,1.466 -1.097,1.847 -3.355,1.883 -13.451,7.551 -16.807,9.434 -0.679,0.381 -1.515,0.381 -2.193,0 -3.355,-1.883 -13.451,-7.551 -16.807,-9.434 -0.678,-0.381 -1.096,-1.084 -1.096,-1.846 0,-3.766 0,-15.101 0,-18.867 0,-0.762 0.418,-1.466 1.097,-1.8470003 3.354,-1.883 13.452,-7.551 16.806,-9.43400004 z" clip-rule="evenodd" id="path2" style="fill:#004482;fill-opacity:1"/>
             <path fill="#5c6bc0" fill-rule="evenodd" d="m 0.304,31.404282 c -0.266,-0.356 -0.304,-0.694 -0.304,-1.149 0,-3.744 0,-15.014 0,-18.759 0,-0.758 0.417,-1.458 1.094,-1.8360003 3.343,-1.872 13.405,-7.507 16.748,-9.38000004 0.677,-0.379 1.594,-0.371 2.271,0.008 3.343,1.87200004 13.371,7.45900004 16.714,9.33100004 0.27,0.152 0.476,0.335 0.66,0.5760003 z" clip-rule="evenodd" id="path4" style="fill:#659ad2;fill-opacity:1"/>
             <path fill="#ffffff" fill-rule="evenodd" d="m 19,7.0002817 c 7.727,0 14,6.2730003 14,14.0000003 0,7.727 -6.273,14 -14,14 -7.727,0 -14,-6.273 -14,-14 0,-7.727 6.273,-14.0000003 14,-14.0000003 z m 0,7.0000003 c 3.863,0 7,3.136 7,7 0,3.863 -3.137,7 -7,7 -3.863,0 -7,-3.137 -7,-7 0,-3.864 3.136,-7 7,-7 z" clip-rule="evenodd" id="path6"/>
             <path fill="#3949ab" fill-rule="evenodd" d="m 37.485,10.205282 c 0.516,0.483 0.506,1.211 0.506,1.784 0,3.795 -0.032,14.589 0.009,18.384 0.004,0.396 -0.127,0.813 -0.323,1.127 l -19.084,-10.5 z" clip-rule="evenodd" id="path8" style="fill:#00599c;fill-opacity:1"/>
         </svg>
-        <div>
-<!--            <div class="flex justify-center items-center"></div>-->
-            <div class="grid grid-rows-3 text-white/90">
-                <p>
-                    Version 1.0.5
-                </p>
-                <p>
-                    Made with Ultralight
-                </p>
-                <p>
-                    Made by SirKostya009. Design by r1sque
-                </p>
-            </div>
+        <div class="grid col-span-2 grid-rows-3 /90">
+            <p>C-Edit - simple C/C++ IDE for beginning learners</p>
+            <p>Version: 1.0.6</p>
+            <p>Developers: SirKostya009 & r1sque </p>
+            <p>All rights reserved</p>
         </div>
     </div>
 
-    <div class="relative w-full text-white">
-        <div class="absolute inset-y-0 left-0 flex items-center px-5 pointer-events-default font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md">
-            <p class="w-12 text-center">compiler</p>
-        </div>
-        <input id="bin" type="text" onchange="OnBinChange(this.value)"
-               class="bg-[#303030] pl-24 p-2.5 shadow-md rounded-md border-none outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue" placeholder="/path/to/bin">
-    </div>
+    <div class="grid grid-cols-[min-content_1fr] w-full gap-y-4 pb-4">
+        <label for="bin" class="flex items-center justify-center px-3.5 font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md shadow-md">
+            bin
+        </label>
 
-    <div class="relative w-full mt-3 text-white">
-        <div class="absolute inset-y-0 left-0 flex items-center px-5 pointer-events-default font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md">
-            <p class="w-12 text-center">include</p> 
-        </div>
-        <input id="include" type="text" onchange="OnIncludeChange(this.value)"
-               class="bg-[#303030] pl-24 p-2.5 shadow-md rounded-md border-none outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue" placeholder="/path/to/include">
-    </div>
+        <input id="bin" type="text" oninput="OnBinChange(this.value)" placeholder="/шлях/до/bin"
+               class="bg-[#303030] p-2.5 shadow-md rounded-r-md outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue">
+
+        <label for="lib" class="flex items-center justify-center px-3.5 font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md shadow-md">
+            lib
+        </label>
+
+        <input id="lib" type="text" oninput="OnLibChange(this.value)" placeholder="/шлях/до/lib"
+               class="bg-[#303030] p-2.5 shadow-md rounded-r-md outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue">
     
-    <div class="relative w-full mt-3 text-white">
-        <div class="absolute inset-y-0 left-0 flex items-center px-5 pointer-events-default font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md">
-            <p class="w-12 text-center">lib</p> 
-        </div>
-        <input id="lib" type="text" onchange="OnLibChange(this.value)"
-               class="bg-[#303030] pl-24 p-2.5 shadow-md rounded-md border-none outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue" placeholder="/path/to/lib">
+        <label for="include" class="flex items-center justify-center px-3.5 font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md shadow-md">
+            include
+        </label>
+
+        <input id="include" type="text" oninput="OnIncludeChange(this.value)" placeholder="/шлях/до/include"
+               class="bg-[#303030] p-2.5 shadow-md rounded-r-md outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue">
+    
+        <label for="flags" class="flex items-center justify-center px-3.5 font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md ">
+            flags
+        </label>
+
+        <input id="flags" type="text" oninput="OnFlagsChange(this.value)" placeholder="-O2"
+               class="bg-[#303030] p-2.5 shadow-md rounded-r-md outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue">
     </div>
 
-    <div class="relative w-full mt-3 text-white">
-        <div class="absolute inset-y-0 left-0 flex items-center px-5 pointer-events-default font-semibold border-r border-[#3f3f3f] bg-[#2a2a2a] rounded-l-md">
-            <p class="w-12 text-center">flags</p> 
-        </div>
-        <input id="flags" type="text" onchange="OnFlagsChange(this.value)"
-               class="bg-[#303030] pl-24 p-2.5 shadow-md rounded-md border-none outline-none w-full transition duration-400 hover:shadow-outline-blue focus:shadow-outline-sky-blue" placeholder="-O2">
-    </div>
-
-    <div class="relative h-10 w-full mt-3 text-white">
+    <div class="relative h-10 w-full mt-3">
         <select id="compiler" onchange="OnCompilerChange(this.value)"
                 class="peer h-full w-full rounded-[7px] border border-white/50 border-t-transparent bg-[#303030] px-3 py-2.5 font-sans text-sm font-normal outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-white/50 placeholder-shown:border-t-white/50 focus:border-white focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50">
-          <option value="g++">g++</option>
-          <option value="gcc">gcc</option>
-          <option value="clang++">clang++</option>
-          <option value="clang">clang</option>
-          <option value="msvc">msvc</option>
+            <option value="g++.exe">g++</option>
+            <option value="gcc.exe">gcc</option>
+            <option value="clang++.exe">clang++</option>
+            <option value="clang.exe">clang</option>
         </select>
-        <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-white/80 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-white/50 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-white/50 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-white peer-focus:before:border-t peer-focus:before:border-l peer-focus:before:border-white peer-focus:after:border-t peer-focus:after:border-r peer-focus:after:border-white peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-          Select a Language
+        <label for="compiler" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight/80 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-white/50 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-white/50 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus peer-focus:before:border-t peer-focus:before:border-l peer-focus:before:border-white peer-focus:after:border-t peer-focus:after:border-r peer-focus:after:border-white peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+            Компілятор
         </label>
     </div>
 
-    <div class="bg-[#303030] w-full grid grid-cols-2 gap-5 text-white mt-5 p-2 pb-3 shadow-md rounded-lg">
+    <div class="bg-[#303030] w-full mt-5 p-2 pb-3 shadow-md rounded-lg">
         <div class="inline-flex items-center">
             <label class="relative flex items-center p-3 -mt-5 rounded-full cursor-pointer">
-              <input type="checkbox" onchange="OnLookUpChange(this.checked)" id="lookUpCompiler"
-                     class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-white/50 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#252525] checked:bg-[#252525] checked:before:bg-white/30 hover:before:opacity-10"/>
-              <span class="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                <input type="checkbox" onchange="OnLookUpChange(this.checked)" id="lookUpCompiler"
+                       class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-white/50 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#252525] checked:bg-[#252525] checked:before:bg-white/30 hover:before:opacity-10"/>
+                <span class="absolute transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"
+                     stroke="currentColor" stroke-width="1">
+                  <path fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd"></path>
                 </svg>
               </span>
             </label>
-            <label class="mt-px font-light text-white">
-              <div>
-                <p class="block font-sans text-base antialiased font-medium leading-relaxed text-white">
-                  Lookup compiler path
-                </p>
-                <p class="block font-sans text-sm antialiased font-normal leading-normal text-white">
-                  Enabling this option will make the application search for the compiler path in the system PATH variable.
-                </p>
-              </div>
-            </label>
-        </div>
-
-        <div class="inline-flex items-center">
-            <label class="relative flex items-center p-3 -mt-5 rounded-full cursor-pointer">
-              <input type="checkbox" onchange="OnSaveTabsChange(this.checked)" id="saveTabs"
-                     class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-white/50 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#252525] checked:bg-[#252525] checked:before:bg-white/30 hover:before:opacity-10"/>
-              <span class="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-              </span>
-            </label>
-            <label class="mt-px font-light text-white">
-              <div>
-                <p class="block font-sans text-base antialiased font-medium leading-relaxed text-white">
-                  Save tabs on exit.
-                </p>
-                <p class="block font-sans text-sm antialiased font-normal leading-normal text-white">
-                  Enabling this option will save the currently opened tabs when the application is closed, and restore them the next time the application is launched.
-                </p>
-              </div>
+            <label class="mt-px font-light">
+                <span class="block font-sans text-base antialiased font-medium leading-relaxed">
+                    Компілятор на PATH
+                </span>
+                <span class="block font-sans text-sm antialiased font-normal leading-normal">
+                    Використовувати компілятор, який знаходиться у змінні PATH
+                </span>
             </label>
         </div>
     </div>

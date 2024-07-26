@@ -5,11 +5,8 @@
 #include <thread>
 #include <shobjidl.h>
 #include <boost/filesystem.hpp>
-#include <boost/asio.hpp>
-#include <boost/process/windows.hpp>
 
 namespace bf = boost::filesystem;
-namespace ba = boost::asio;
 
 namespace {
     COMDLG_FILTERSPEC filterSpec[] = {
@@ -17,15 +14,18 @@ namespace {
             {L"C Files",   L"*.c"},
             {L"All Files", L"*.*"},
     };
+
+    ul::JSFunction toggleTerminal;
+    ul::JSFunction newTab;
 }
 
 App::App()
 : app{ ul::App::Create() }
 , window{ ul::Window::Create(app->main_monitor(),
-          Settings::settings.width,
-          Settings::settings.height,
-          false,
-          ul::kWindowFlags_Resizable | ul::kWindowFlags_Maximizable) }
+                             Settings::settings.width,
+                             Settings::settings.height,
+                             false,
+                             ul::kWindowFlags_Resizable | ul::kWindowFlags_Maximizable) }
 , overlay{ ul::Overlay::Create(window, 1, 1, 0, 0) } {
     CoInitialize(nullptr);
 
@@ -38,22 +38,6 @@ App::App()
     overlay->Resize(window->width(), window->height());
     overlay->view()->LoadURL("file:///app.html");
     overlay->Focus();
-}
-
-inline ul::String getContents() {
-    return ul::JSEval("codearea.value");
-}
-
-inline void App::print(const std::string& message) {
-    jsCallbacks.emplace("terminal.value += '" + message + '\'');
-}
-
-inline void App::status(const std::string &str) {
-    jsCallbacks.emplace("runStatus.innerText = '" + str + '\'');
-}
-
-inline void App::toggleTerminal() {
-    jsCallbacks.emplace("toggleTerminal()");
 }
 
 ul::String escapeTrailingSlash(const ul::String &str) {
@@ -80,7 +64,7 @@ IFileDialog* createDialogInstance(bool save) {
     if (FAILED(hr)) {
         return nullptr;
     }
-    dialog->SetFileTypes(3, filterSpec);
+    dialog->SetFileTypes(sizeof(filterSpec) / sizeof(COMDLG_FILTERSPEC), filterSpec);
 
     return dialog;
 }
@@ -109,118 +93,7 @@ ul::String saveDialog(HWND window) {
     return {};
 }
 
-inline bool isActiveTab() {
-    return ul::JSEval("activeTab").ToBoolean();
-}
-
-inline void clearTerminal() {
-    ul::JSEval("terminal.value = ''");
-}
-
-inline bool isTerminalHidden() {
-    return ul::JSEval("terminal.parentElement.classList.contains('hidden')").ToBoolean();
-}
-
-inline bool hasFilename() {
-    return ul::JSEval("activeTab.getAttribute('data-filename') !== 'null'").ToBoolean();
-}
-
-inline ul::String getFilename() {
-    return ul::JSEval("activeTab.getAttribute('data-filename')");
-}
-
-void App::SaveFile(const ul::JSObject&, const ul::JSArgs&) {
-    if (ul::JSEval("!activeTab").ToBoolean()) {
-        return;
-    }
-
-    if (!ul::JSEval("activeTab.getAttribute('data-filename') === 'null'").ToBoolean()) {
-        auto filename = saveDialog((HWND) window->native_handle());
-        if (filename.empty()) {
-            return;
-        }
-
-        ul::JSEval("activeTab.setAttribute('data-filename', '" + filename + "')");
-    }
-
-    auto filename = (ul::String) ul::JSEval("activeTab.getAttribute('data-filename')");
-    std::ofstream(filename.utf8().data()) << getContents().utf8().data();
-}
-
-void App::BuildAndRun(const ul::JSObject&, const ul::JSArgs&) {
-    if (!isActiveTab()) {
-        return;
-    }
-
-    if (isRunning) return;
-    isRunning = true;
-
-    clearTerminal();
-    if (isTerminalHidden()) {
-        toggleTerminal();
-    }
-
-    std::thread([&] {
-        auto filename = hasFilename() ? std::string(getFilename().utf8().data()) : (bf::temp_directory_path() / bf::unique_path()).string() + ".cpp";
-        std::ofstream(filename) << getContents().utf8().data();
-
-        auto out = bp::ipstream();
-        auto err = std::error_code();
-        auto exe = bf::temp_directory_path() / bf::unique_path();
-        auto compiler = Settings::settings.lookUpCompiler
-                        ? bp::search_path(Settings::settings.compiler)
-                        : bf::path(Settings::settings.compilerPath) / Settings::settings.compiler;
-        status("Compiling");
-        auto compilation = bp::child(compiler, filename, "-o", exe,
-//                                         Settings::settings.flags,
-//                                         "-I", Settings::settings.includePath,
-//                                         "-L", Settings::settings.libPath,
-                                     (bp::std_err & bp::std_out) > out,
-                                     err, bp::windows::create_no_window);
-        auto read = std::string();
-        while (std::getline(out, read)) {
-            if (!read.empty()) print(read);
-        }
-
-        compilation.wait();
-        if (err || compilation.exit_code()) {
-            print("Compilation failed\\n" + err.message());
-            status("Failed");
-            isRunning = false;
-            return;
-        }
-
-        auto ioc = ba::io_context();
-        in = new bp::async_pipe(ioc);
-        out = bp::ipstream{};
-        status("Running");
-        auto child = bp::child(exe.string() + ".exe",
-                               (bp::std_err & bp::std_out) > out,
-                               bp::std_in < *in,
-                               ioc, err, bp::windows::create_no_window);
-        if (err) {
-            print("Execution failed\\n" + err.message());
-            status("Failed");
-            delete in;
-            in = nullptr;
-            isRunning = false;
-            return;
-        }
-
-        while (std::getline(out, read)) {
-            if (!read.empty()) print(read);
-        }
-
-        child.wait();
-        print("\\nProcess finished with exit code " + std::to_string(child.exit_code()));
-        status("Finished");
-        delete in;
-        in = nullptr;
-        isRunning = false;
-    }).detach();
-}
-
-std::array<ul::String, 2> openDialog(HWND window) {
+std::pair<ul::String, ul::String> openDialog(HWND window) {
     auto dialog = createDialogInstance(false);
 
     if (SUCCEEDED(dialog->Show(window))) {
@@ -247,6 +120,99 @@ std::array<ul::String, 2> openDialog(HWND window) {
     return {};
 }
 
+inline void writeFile(const char* filename) {
+    std::ofstream(filename) << ((ul::String) ul::JSEval("codearea.value")).utf8().data();
+}
+
+void App::BuildAndRun(const ul::JSObject&, const ul::JSArgs&) {
+    if (!ul::JSEval("activeTab").ToBoolean() || runner.IsRunning()) {
+        return;
+    }
+
+    ul::JSEval("terminal.value = ''");
+    if (ul::JSEval("terminal.parentElement.classList.contains('hidden')").ToBoolean()) {
+        toggleTerminal({});
+    } else {
+        ul::JSEval("terminal.focus()");
+    }
+
+    auto filename = ul::JSEval("activeTab.getAttribute('data-filename') !== 'null'").ToBoolean()
+                    ? std::string(((ul::String) ul::JSEval("activeTab.getAttribute('data-filename')")).utf8().data())
+                    : (bf::temp_directory_path() / bf::unique_path()).string() + ".cpp";
+    writeFile(filename.c_str());
+
+    std::thread(
+            &ProcessRunner::BuildAndRun,
+            &runner,
+            filename,
+            [this](const std::string &message) { jsCallbacks.emplace("terminal.value += `" + message + '`'); },
+            [this](const std::string &message) { jsCallbacks.emplace("runStatus.innerText = `" + message + '`'); }
+    ).detach();
+}
+
+void App::OnStdIn(const ul::JSObject&, const ul::JSArgs& args) {
+    if (!runner.IsRunning()) {
+        return;
+    }
+
+    auto string = ((ul::String) args[0]).utf8();
+#ifdef _DEBUG
+    std::cout << string.data() << std::endl;
+#endif
+    char key;
+
+#define cmpstr(a, str) !strncmp(a.data(), str, a.length())
+
+    if (string.length() > 1) {
+        if (cmpstr(string, "Enter")) {
+            key = '\n';
+        } else if (cmpstr(string, "Tab")) {
+            key = '\t';
+        } else if (cmpstr(string, "Backspace")) {
+            key = '\b';
+        } else if (cmpstr(string, "Delete")) {
+            key = 127;
+        } else if (cmpstr(string, "Unidentified")) {
+            key = ' ';
+        } else {
+            return;
+        }
+
+        runner.Input(key);
+    } else {
+        for (size_t i = 0; i < string.sizeBytes(); ++i) {
+            runner.Input(string.data()[i]);
+        }
+    }
+}
+
+void App::SaveFile(const ul::JSObject&, const ul::JSArgs&) {
+    if (ul::JSEval("!activeTab").ToBoolean()) {
+        return;
+    }
+
+    if (ul::JSEval("activeTab.getAttribute('data-filename') === 'null'").ToBoolean()) {
+        auto filename = saveDialog((HWND) window->native_handle());
+        if (filename.empty()) {
+            return;
+        }
+
+        ul::JSEval(R"(activeTab.children[1].innerText = /.*([\/\\](.*))$/.exec(')"+filename+"')[2]");
+        ul::JSEval("activeTab.setAttribute('data-filename', '" + filename + "')");
+    }
+
+    auto filename = (ul::String) ul::JSEval("activeTab.getAttribute('data-filename')");
+    writeFile(filename.utf8().data());
+}
+
+void App::OpenSettings(const ul::JSObject&, const ul::JSArgs&) {
+    if (settings) {
+        return;
+    }
+
+    settings = std::make_unique<Settings>(app, [this] { closeSettings = true; });
+}
+
 void App::OpenFile(const ul::JSObject&, const ul::JSArgs&) {
     auto [filename, contents] = openDialog((HWND) window->native_handle());
 
@@ -254,7 +220,7 @@ void App::OpenFile(const ul::JSObject&, const ul::JSArgs&) {
         return;
     }
 
-    ul::JSEval("newTab('" + filename + "', `" + contents + "`)");
+    newTab({filename, contents});
 }
 
 void App::Copy(const ul::JSObject&, const ul::JSArgs&) {
@@ -275,45 +241,6 @@ void App::Copy(const ul::JSObject&, const ul::JSArgs&) {
     GlobalFree(hg);
 }
 
-void App::OnStdIn(const ul::JSObject&, const ul::JSArgs& args) {
-    if (in == nullptr) {
-        return;
-    }
-
-    auto string = ((ul::String) args[0]).utf8();
-    char key;
-
-#define cmpstr(a, str) !strncmp(a.data(), str, a.length())
-
-    if (string.length() > 1) {
-        if (cmpstr(string, "Enter")) {
-            key = '\n';
-        } else if (cmpstr(string, "Tab")) {
-            key = '\t';
-        } else if (cmpstr(string, "Backspace")) {
-            key = '\b';
-        } else if (cmpstr(string, "Delete")) {
-            key = 127;
-        } else {
-            return;
-        }
-    } else {
-        key = string[0];
-    }
-
-    ba::async_write(*in, ba::buffer(&key, 1), [](const std::error_code &err, std::size_t) {
-        if (err) std::cerr << "OnStdIn error" << std::endl;
-    });
-}
-
-void App::OpenSettings(const ul::JSObject&, const ul::JSArgs&) {
-    if (settings) {
-        return;
-    }
-
-    settings = new Settings(app, [this] { closeSettings = true; });
-}
-
 void App::OnUpdate() {
     while (!jsCallbacks.empty()) {
         ul::JSEval(jsCallbacks.front().c_str());
@@ -321,7 +248,6 @@ void App::OnUpdate() {
     }
 
     if (closeSettings) {
-        delete settings;
         settings = nullptr;
         closeSettings = false;
         ul::SetJSContext(overlay->view()->LockJSContext()->ctx());
@@ -330,52 +256,30 @@ void App::OnUpdate() {
 
 bool App::OnKeyEvent(const ul::KeyEvent& evt) {
     if ((evt.modifiers & ul::KeyEvent::kMod_CtrlKey) && !evt.is_auto_repeat && evt.type == ul::KeyEvent::Type::kType_RawKeyDown) {
+#ifdef _DEBUG
         std::cout << evt.virtual_key_code << std::endl;
+#endif
         switch (evt.virtual_key_code) {
-        case 'O': {
-            auto [filename, contents] = openDialog((HWND) window->native_handle());
-
-            if (filename.empty()) {
-                break;
-            }
-
-            ul::JSEval("newTab('" + filename + "', `" + contents + "`)");
+        case 'O':
+            OpenFile({}, {});
             break;
-        }
-        case 'S': {
-            if (ul::JSEval("!activeTab").ToBoolean()) {
-                return false;
-            }
-
-            if (ul::JSEval("activeTab.getAttribute('data-filename') === 'null'").ToBoolean()) {
-                auto result = saveDialog((HWND) window->native_handle());
-
-                if (result.empty()) {
-                    return true;
-                }
-
-                ul::JSEval("activeTab.setAttribute('data-filename', '" + result + "')");
-            }
-
-            auto filename = (ul::String) ul::JSEval("activeTab.getAttribute('data-filename')");
-            auto contents = (ul::String) ul::JSEval("codearea.value");
-
-            std::ofstream(filename.utf8().data()) << contents.utf8().data();
+        case 'S':
+            SaveFile({}, {});
             break;
-        }
         case 'N':
-            ul::JSEval("newTab()");
-
+            newTab({});
             break;
         case 'Q':
             OnClose(window.get());
-
+            break;
+        case 'C':
+            runner.Input('\x3');
             break;
         case 115: // F4
-            ul::JSEval("activeTab && activeTab.children[2].click()");
+            ul::JSEval("activeTab.children[2].click()");
             break;
         case 192: // ~
-            ul::JSEval("toggleTerminal()");
+            toggleTerminal({});
             break;
         case 13: // Enter
             BuildAndRun({}, {});
@@ -408,16 +312,20 @@ void App::OnDOMReady(ul::View *caller, uint64_t frame_id, bool is_main_frame, co
     ul::SetJSContext(caller->LockJSContext()->ctx());
     auto global = ul::JSGlobalObject();
 
+    global["quit"] = JSCallback([this](const ul::JSObject&, const ul::JSArgs&) { OnClose(window.get()); });
     global["buildAndRun"] = BindJSCallback(&App::BuildAndRun);
     global["stdin"] = BindJSCallback(&App::OnStdIn);
     global["openSettings"] = BindJSCallback(&App::OpenSettings);
     global["saveDialog"] = BindJSCallback(&App::SaveFile);
     global["openFile"] = BindJSCallback(&App::OpenFile);
-    global["stopRunning"] = JSCallback([this](const ul::JSObject&, const ul::JSArgs&) { OnStdIn({}, {"\x3"}); });
+    global["stopRunning"] = JSCallback([this](const ul::JSObject&, const ul::JSArgs&) { runner.Input('\x3'); });
     global["copyTerminal"] = BindJSCallback(&App::Copy);
 
+    toggleTerminal = global["toggleTerminal"];
+    newTab = global["newTab"];
+
     if (Settings::settings.terminalHidden) {
-        ul::JSEval("toggleTerminal()");
+        toggleTerminal({});
     }
 }
 

@@ -2,7 +2,7 @@
 
 Settings::settings_t Settings::settings = {
         .lookUpCompiler = true,
-        .compiler = "g++",
+        .compiler = "g++.exe",
         .width = 800,
         .height = 600,
 
